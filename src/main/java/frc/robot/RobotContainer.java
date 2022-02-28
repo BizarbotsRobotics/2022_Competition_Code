@@ -35,8 +35,8 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   //private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-
   private final XboxController primaryController = new XboxController(0);
+  private final XboxController operatorController = new XboxController(1);
 
   //Pneumatics
   Compressor pcmCompressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
@@ -78,12 +78,12 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     //new Button(primaryController::getBackButton).whenPressed(m_drivetrainSubsystem::zeroGyroscope);
-    new Button(primaryController::getAButton).whileHeld(new intakeCommand(intakeSubsystem));
-    new Button(primaryController::getBButton).whileHeld(new conveyorCommand(conveyorSubsystem));
-    new Button(primaryController::getLeftBumper).whileHeld(new sushiCommand(feederSubsystem));
-    new Button(primaryController::getRightBumper).whenPressed(new shooterCommand(shooterSubsystem));
-    new Button(primaryController::getXButton).whileHeld(new lowerIntake(intakeSubsystem));
-    new Button(primaryController::getYButton).whileHeld(new raiseIntake(intakeSubsystem));
+    new Button(operatorController::getAButton).whileHeld(new intakeCommand(intakeSubsystem));
+    new Button(operatorController::getBButton).whileHeld(new conveyorCommand(conveyorSubsystem));
+    new Button(operatorController::getLeftBumper).whileHeld(new sushiCommand(feederSubsystem));
+    new Button(operatorController::getRightBumper).whenPressed(new shooterCommand(shooterSubsystem));
+    new Button(operatorController::getXButton).whileHeld(new lowerIntake(intakeSubsystem));
+    new Button(operatorController::getYButton).whileHeld(new raiseIntake(intakeSubsystem));
   }
 
   /**

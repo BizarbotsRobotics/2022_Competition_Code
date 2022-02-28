@@ -1,5 +1,8 @@
 import org.gradle.internal.os.OperatingSystem
 
+include ':common' 
+include ':common:robot'
+
 pluginManagement {
     repositories {
         mavenLocal()
