@@ -67,6 +67,8 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     testImplementation 'junit:junit:4.13.1'
+
+    compile project(':common')
 }
 
 // Simulation configuration (e.g. environment variables).
