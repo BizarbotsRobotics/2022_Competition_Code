@@ -13,16 +13,30 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.AuxArmMoveCommand;
+import frc.robot.commands.ConveyorMoveCommand;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.ShooterHighCloseCommand;
+import frc.robot.commands.ShooterHighFarCommand;
+import frc.robot.commands.ShooterLowCloseCommand;
+import frc.robot.commands.ShooterLowFarCommand;
+import frc.robot.commands.SushiMoveCommand;
+import frc.robot.commands.TestShooterSpeed;
+import frc.robot.commands.climberMoveCommand;
 import frc.robot.commands.conveyorCommand;
-import frc.robot.commands.intakeCommand;
-import frc.robot.commands.lowerClimber;
-import frc.robot.commands.lowerIntake;
-import frc.robot.commands.raiseClimber;
-import frc.robot.commands.raiseIntake;
+import frc.robot.commands.intakeBallCommand;
+import frc.robot.commands.lowerClimberCommand;
+import frc.robot.commands.lowerIntakeCommand;
+import frc.robot.commands.outtakeBallCommand;
+import frc.robot.commands.raiseClimberCommand;
+import frc.robot.commands.raiseIntakeCommand;
+import frc.robot.commands.rotateToVisionTargetCommand;
 import frc.robot.commands.shooterCommand;
 import frc.robot.commands.sushiCommand;
+import frc.robot.commands.toggleAngleCommand;
+import frc.robot.commands.toggleIntakeFlipCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.*;
 
@@ -33,8 +47,9 @@ import frc.robot.subsystems.*;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private static final Subsystem AuxArmSubsystem = null;
   // The robot's subsystems and commands are defined here...
-  //private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final XboxController primaryController = new XboxController(0);
   private final XboxController operatorController = new XboxController(1);
 
@@ -47,7 +62,8 @@ public class RobotContainer {
   private final ConveyorSubsystem conveyorSubsystem = new ConveyorSubsystem();
   private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   private final FeederSubsystem feederSubsystem = new FeederSubsystem();
-  private final climberSubsystem climbSubsystem = new climberSubsystem();
+  private final ClimberSubsystem climbSubsystem = new ClimberSubsystem();
+  private final AuxArmSubsystem auxArmSubsystem = new AuxArmSubsystem();
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -57,19 +73,28 @@ public class RobotContainer {
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
-    // m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-    //         m_drivetrainSubsystem,
-    //         () -> -modifyAxis(primaryController.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(primaryController.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(primaryController.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-    // ));
-
+    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+            m_drivetrainSubsystem,
+            () -> -modifyAxis(primaryController.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(primaryController.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(primaryController.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+    ));
+    //pcmCompressor.disable();
 
     CommandScheduler.getInstance().registerSubsystem(intakeSubsystem);
     CommandScheduler.getInstance().registerSubsystem(conveyorSubsystem);
     CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
     CommandScheduler.getInstance().registerSubsystem(feederSubsystem);
     CommandScheduler.getInstance().registerSubsystem(climbSubsystem);
+    CommandScheduler.getInstance().registerSubsystem(auxArmSubsystem);
+
+    // Shooter Subsystem
+    CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, new TestShooterSpeed(shooterSubsystem));
+    CommandScheduler.getInstance().setDefaultCommand(auxArmSubsystem, new AuxArmMoveCommand(auxArmSubsystem, () -> -modifyAxis(primaryController.getRightTriggerAxis()), () -> -modifyAxis(primaryController.getLeftTriggerAxis())));
+    CommandScheduler.getInstance().setDefaultCommand(conveyorSubsystem, new ConveyorMoveCommand(conveyorSubsystem, () -> -modifyAxis(operatorController.getRightY())));
+
+    CommandScheduler.getInstance().setDefaultCommand(feederSubsystem, new SushiMoveCommand(feederSubsystem, () -> -modifyAxis(operatorController.getLeftY())));
+    CommandScheduler.getInstance().setDefaultCommand(climbSubsystem, new climberMoveCommand(climbSubsystem, () -> -modifyAxis(operatorController.getRightTriggerAxis()), () -> -modifyAxis(operatorController.getLeftTriggerAxis())));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -78,12 +103,22 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     //new Button(primaryController::getBackButton).whenPressed(m_drivetrainSubsystem::zeroGyroscope);
-    new Button(operatorController::getAButton).whileHeld(new intakeCommand(intakeSubsystem));
-    new Button(operatorController::getBButton).whileHeld(new conveyorCommand(conveyorSubsystem));
-    new Button(operatorController::getLeftBumper).whileHeld(new sushiCommand(feederSubsystem));
-    new Button(operatorController::getRightBumper).whenPressed(new shooterCommand(shooterSubsystem));
-    new Button(operatorController::getXButton).whileHeld(new lowerIntake(intakeSubsystem));
-    new Button(operatorController::getYButton).whileHeld(new raiseIntake(intakeSubsystem));
+    new Button(operatorController::getLeftBumper).whileHeld(new outtakeBallCommand(intakeSubsystem));
+    new Button(operatorController::getRightBumper).whileHeld(new intakeBallCommand(intakeSubsystem));
+    new Button(operatorController::getStartButton).toggleWhenPressed(new toggleIntakeFlipCommand(intakeSubsystem));
+    new Button(operatorController::getBackButton).toggleWhenPressed(new toggleAngleCommand(shooterSubsystem));
+
+    new Button(operatorController::getYButton).whenPressed(new ShooterHighFarCommand(shooterSubsystem));
+    new Button(operatorController::getXButton).whenPressed(new ShooterLowFarCommand(shooterSubsystem));
+    new Button(operatorController::getBButton).whenPressed(new ShooterHighCloseCommand(shooterSubsystem));
+    new Button(operatorController::getAButton).whenPressed(new ShooterLowCloseCommand(shooterSubsystem));
+
+    //new Button(primaryController::getXButton).whenPressed(new rotateToVisionTargetCommand(m_drivetrainSubsystem, VisionSubsystem,)))
+    // new Button(operatorController::getBButton).whileHeld(new conveyorCommand(conveyorSubsystem));
+    // new Button(operatorController::getLeftBumper).whileHeld(new sushiCommand(feederSubsystem));
+    // new Button(operatorController::getRightBumper).whenPressed(new shooterCommand(shooterSubsystem));
+    // new Button(operatorController::getXButton).whileHeld(new lowerIntakeCommand(intakeSubsystem));
+    // new Button(operatorController::getYButton).whileHeld(new raiseIntakeCommand(intakeSubsystem));
   }
 
   /**

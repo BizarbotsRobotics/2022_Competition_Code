@@ -2,6 +2,10 @@ import org.gradle.internal.os.OperatingSystem
 
 
 pluginManagement {
+    plugins {
+        id "edu.wpi.first.GradleRIO" version "2020.2.2"
+        id 'net.ltgt.errorprone' version '1.1.1'
+    }
     repositories {
         mavenLocal()
         gradlePluginPortal()
@@ -26,5 +30,3 @@ pluginManagement {
         }
     }
 }
-
-include ':common'

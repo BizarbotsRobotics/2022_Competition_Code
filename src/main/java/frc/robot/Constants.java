@@ -31,27 +31,27 @@ public final class Constants {
 
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.5842; // FIXME Measure and set wheelbase
 
-    public static final int DRIVETRAIN_PIGEON_ID = 4; // FIXME Set Pigeon ID
+    public static final int DRIVETRAIN_PIGEON_ID = 0; // FIXME Set Pigeon ID
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 7; // FIXME Set front left module drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 8; // FIXME Set front left module steer motor ID
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 3; // FIXME Set front left steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(60.82031421915981); // FIXME Measure and set front left steer offset
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(238.88671316465306); // FIXME Measure and set front left steer offset
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 1; // FIXME Set front right drive motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 2; // FIXME Set front right steer motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 2; // FIXME Set front right steer encoder ID
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(110.74218735335052); // FIXME Measure and set front right steer offset
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(205.2246039534871); // FIXME Measure and set front right steer offset
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 5; // FIXME Set back left drive motor ID
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 6; // FIXME Set back left steer motor ID
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 1; // FIXME Set back left steer encoder ID
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(333.1933480163102); // FIXME Measure and set back left steer offset
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(159.60939048723205); // FIXME Measure and set back left steer offset
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 3; // FIXME Set back right drive motor ID
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 4; // FIXME Set back right steer motor ID
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 0; // FIXME Set back right steer encoder ID
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(359.472692093231); // FIXME Measure and set back right steer offset
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(287.5781482104335); // FIXME Measure and set back right steer offset
 
     /* 
     * Intake Constants 
@@ -79,18 +79,27 @@ public final class Constants {
     /*
     * Shooter Constants
     */
-    public static final int[] SHOOTER_SOLENOID_PORTS = {0,1};
+    public static final int[] SHOOTER_SOLENOID_PORTS = {6,7};
     public static final int SHOOTER_ID_LEFT = 12;
     public static final int SHOOTER_ID_RIGHT = 11;
 
-    public static final double SHOOTER_kP = 6e-5; 
+    public static final double SHOOTER_kP = 0.0002; 
     public static final double SHOOTER_kI = 0;
-    public static final double SHOOTER_kD = 0; 
+    public static final double SHOOTER_kD = .01; 
     public static final double SHOOTER_kIz = 0; 
-    public static final double SHOOTER_kFF = 0.000015; 
+    public static final double SHOOTER_kFF = 0.000174; 
     public static final double SHOOTER_kMaxOutput = 1; 
     public static final double SHOOTER_kMinOutput = -1;
     public static final double SHOOTER_maxRPM = 5700;
     public static final int SHOOTER_CURRENT_LIMIT = 20;
+
+    /*
+    * Climber Constants
+    */
+    public static final int CLIMBER_ID_RIGHT = 9;
+    public static final int CLIMBER_ID_LEFT = 16;
+    public static final int CLIMBER_ID_AUX = 15;
+    public static final double CLIMBER_SPEED = 1;
+    public static final double AUX_ARM_SPEED = .5;
 }
 

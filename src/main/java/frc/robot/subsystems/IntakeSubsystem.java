@@ -19,26 +19,35 @@ public class IntakeSubsystem extends SubsystemBase {
   private final DoubleSolenoid intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,0,1);
   private final VictorSPX intakeWheels = new VictorSPX(INTAKE_WHEEL_ID);
 
+  public IntakeSubsystem() {
+     this.raiseIntake();
+     this.intakeWheels.setStatusFramePeriod(1,50);
+     this.intakeWheels.setStatusFramePeriod(2,50);
+  }
+
   /** Puts down the intake. */
   public void lowerIntake() {
-    intakeSolenoid.set(kForward);
+    this.intakeSolenoid.set(kForward);
   }
 
   /** Raises intake */
   public void raiseIntake() {
-    intakeSolenoid.set(kReverse);
+    this.intakeSolenoid.set(kReverse);
   }
 
+  public void toggleIntake() {
+    this.intakeSolenoid.toggle();
+  }
   // Runs the intake wheels so they intake Cargo
   public void intakeCargo() {
     this.intakeWheels.set(ControlMode.PercentOutput, INTAKE_WHEEL_SPEED);
   }
 
-  public void expelCargo() {
-    intakeWheels.set(ControlMode.PercentOutput, INTAKE_WHEEL_SPEED);
+  public void outtakeCargo() {
+    this.intakeWheels.set(ControlMode.PercentOutput, -INTAKE_WHEEL_SPEED);
   }
 
   public void stop() {
-    intakeWheels.set(ControlMode.PercentOutput, 0);
+    this.intakeWheels.set(ControlMode.PercentOutput, 0);
   }
 }

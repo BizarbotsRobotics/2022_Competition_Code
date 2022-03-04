@@ -4,15 +4,19 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.climberSubsystem;
+import java.util.function.DoubleSupplier;
 
-public class raiseClimber extends CommandBase {
-  private final climberSubsystem climber;
-  /** Creates a new raiseClimber. */
-  public raiseClimber(climberSubsystem climber) {
-    this.climber = climber;
-    addRequirements(climber);
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.ConveyorSubsystem;
+
+public class ConveyorMoveCommand extends CommandBase {
+  /** Creates a new sushiCommand. */
+  private final ConveyorSubsystem conveyor;
+  private final DoubleSupplier speed;
+  public ConveyorMoveCommand(ConveyorSubsystem conveyor, DoubleSupplier speed) {
+    this.conveyor = conveyor;
+    this.speed = speed;
+    addRequirements(conveyor);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -23,15 +27,15 @@ public class raiseClimber extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.climber.climberUp();
+    this.conveyor.runConveyor(this.speed.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.climber.stop();
+    this.conveyor.stop();
   }
-
+    
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {

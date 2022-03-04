@@ -25,7 +25,7 @@ public class FeederSubsystem extends SubsystemBase {
 
   /** Creates a new FeederSubsytem. */
   public FeederSubsystem() {
-
+    this.sushi.setControlFramePeriodMs(100);
   }
 
   @Override
@@ -39,5 +39,13 @@ public class FeederSubsystem extends SubsystemBase {
 
   public void sushiStop(){
     this.sushi.set(0);
+  }
+
+  public void runSushi(Double speed) {
+    if(Math.abs(speed) > .1) {
+      this.sushi.set(speed);
+    } else {
+      this.sushi.set(0);
+    }
   }
 }

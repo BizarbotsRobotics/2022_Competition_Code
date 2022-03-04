@@ -4,15 +4,19 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.IntakeSubsystem;
+import java.util.function.DoubleSupplier;
 
-public class raiseIntake extends CommandBase {
-  private final IntakeSubsystem intake;
-  /** Creates a new raiseIntake. */
-  public raiseIntake(IntakeSubsystem intake) {
-    this.intake = intake;
-    addRequirements(intake);
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.FeederSubsystem;
+
+public class SushiMoveCommand extends CommandBase {
+  /** Creates a new sushiCommand. */
+  private final FeederSubsystem feeder;
+  private DoubleSupplier speed;
+  public SushiMoveCommand(FeederSubsystem feeder, DoubleSupplier speed) {
+    this.feeder = feeder;
+    this.speed = speed;
+    addRequirements(feeder);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -23,13 +27,15 @@ public class raiseIntake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.intake.raiseIntake();
+    this.feeder.runSushi(this.speed.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
-
+  public void end(boolean interrupted) {
+    this.feeder.sushiStop();
+  }
+    
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {

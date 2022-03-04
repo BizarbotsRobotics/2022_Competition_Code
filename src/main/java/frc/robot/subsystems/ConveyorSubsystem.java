@@ -18,6 +18,7 @@ public class ConveyorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    this.topConveyor.setControlFramePeriodMs(100);
     // This method will be called once per scheduler run
   }
 
@@ -25,6 +26,13 @@ public class ConveyorSubsystem extends SubsystemBase {
     this.topConveyor.set(TOP_CONVEYOR_SPEED);
   }
 
+  public void runConveyor(Double speed) {
+    if(Math.abs(speed) > .1) {
+      this.topConveyor.set(speed);
+    } else {
+      this.topConveyor.set(0);
+    }
+  }
   public void stop(){
     this.topConveyor.set(0);
   }

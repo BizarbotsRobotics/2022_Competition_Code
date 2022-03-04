@@ -28,12 +28,12 @@ public class DefaultDriveCommand extends CommandBase {
     @Override
     public void execute() {
         m_drivetrainSubsystem.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
+                 new ChassisSpeeds(
                         m_translationXSupplier.getAsDouble(),
                         m_translationYSupplier.getAsDouble(),
-                        m_rotationSupplier.getAsDouble(),
-                        m_drivetrainSubsystem.getGyroscopeRotation()
+                        m_rotationSupplier.getAsDouble()
                 )
+                
         );
     }
 
