@@ -25,16 +25,8 @@ import frc.robot.commands.ShooterLowFarCommand;
 import frc.robot.commands.SushiMoveCommand;
 import frc.robot.commands.TestShooterSpeed;
 import frc.robot.commands.climberMoveCommand;
-import frc.robot.commands.conveyorCommand;
 import frc.robot.commands.intakeBallCommand;
-import frc.robot.commands.lowerClimberCommand;
-import frc.robot.commands.lowerIntakeCommand;
 import frc.robot.commands.outtakeBallCommand;
-import frc.robot.commands.raiseClimberCommand;
-import frc.robot.commands.raiseIntakeCommand;
-import frc.robot.commands.rotateToVisionTargetCommand;
-import frc.robot.commands.shooterCommand;
-import frc.robot.commands.sushiCommand;
 import frc.robot.commands.toggleAngleCommand;
 import frc.robot.commands.toggleIntakeFlipCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -47,7 +39,6 @@ import frc.robot.subsystems.*;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private static final Subsystem AuxArmSubsystem = null;
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final XboxController primaryController = new XboxController(0);
@@ -88,7 +79,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().registerSubsystem(climbSubsystem);
     CommandScheduler.getInstance().registerSubsystem(auxArmSubsystem);
 
-    // Shooter Subsystem
+    // Shooter Subsystem 
     CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, new TestShooterSpeed(shooterSubsystem));
     CommandScheduler.getInstance().setDefaultCommand(auxArmSubsystem, new AuxArmMoveCommand(auxArmSubsystem, () -> -modifyAxis(primaryController.getRightTriggerAxis()), () -> -modifyAxis(primaryController.getLeftTriggerAxis())));
     CommandScheduler.getInstance().setDefaultCommand(conveyorSubsystem, new ConveyorMoveCommand(conveyorSubsystem, () -> -modifyAxis(operatorController.getRightY())));
