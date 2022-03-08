@@ -43,7 +43,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private  HashMap<Integer, TreeMap<Integer, Integer>> shooterSpeeds;
 
-
+  private double setSpeed = 0;
   private VisionSubsystem vision = new VisionSubsystem();
 
   ShuffleboardTab tab = Shuffleboard.getTab("Shooter Testing");
@@ -60,6 +60,8 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterLeft.restoreFactoryDefaults();
     shooterRight.setSmartCurrentLimit(SHOOTER_CURRENT_LIMIT);
     shooterRight.setSmartCurrentLimit(SHOOTER_CURRENT_LIMIT);
+    // shooterRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    // shooterLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
     // Init PID controller
     shooterPidController = shooterRight.getPIDController();
@@ -81,16 +83,30 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterLeft.follow(shooterRight,true);
 
     this.closeAngle();
+
+    this.setShooterSpeed(SHOOTER_DEFAULT_SPEED);
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter Speed", shooterRightEncoder.getVelocity());
+    
     // This method will be called once per scheduler run
   }
 
   public void setShooterSpeed(int speed) {
-    shooterPidController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+    this.setSpeed = speed;
+    shooterPidController.setReference(this.setSpeed, CANSparkMax.ControlType.kVelocity);
+  }
+  public boolean checkSpeed(){
+    if(this.getShooterSpeed() >(this.setSpeed -30) | this.getShooterSpeed() <(this.setSpeed +30)){
+      return true;
+    } else {
+      return false;
+    }
+  }
+  public double getShooterSpeed(){
+    return this.shooterRightEncoder.getVelocity();
   }
 
   public void shooterTesting() {
@@ -106,7 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return this.shooterSpeeds.get(3).get(0);
       }
     } else {
-      double distance = this.vision.getDistanceToHub();
+      double distance = this.vision.getDistanceToHubFeet();
       if(goalType == GOAL_TYPE.HIGH){
         int key  = this.shooterSpeeds.get(0).ceilingKey((int)distance);
         return this.shooterSpeeds.get(0).get(key);
@@ -135,11 +151,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void closeAngle(){
-    this.angleChanger.set(Value.kForward);
+    this.angleChanger.set(Value.kReverse);
   }
 
   public void farAngle(){
-    this.angleChanger.set(Value.kReverse);
+    this.angleChanger.set(Value.kForward);
   }
 
   public void toggleAngle(){
@@ -160,14 +176,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //Initialize high hub, far distance
     shooterSpeeds.put(0, new TreeMap<Integer, Integer>());
-    shooterSpeeds.get(0).put(7, 2000);
-    shooterSpeeds.get(0).put(8, 2000);
-    shooterSpeeds.get(0).put(9, 2000);
-    shooterSpeeds.get(0).put(10, 2000);
-    shooterSpeeds.get(0).put(11, 2000);
-    shooterSpeeds.get(0).put(12, 2000);
-    shooterSpeeds.get(0).put(13, 2000);
-    shooterSpeeds.get(0).put(14, 2000);
+    shooterSpeeds.get(0).put(5, 3500);
+    shooterSpeeds.get(0).put(6, 3400);
+    shooterSpeeds.get(0).put(7, 3600);
+    shooterSpeeds.get(0).put(8, 3750);
+    shooterSpeeds.get(0).put(9, 3750);
+    shooterSpeeds.get(0).put(10, 3950);
+    shooterSpeeds.get(0).put(11, 4100);
+    shooterSpeeds.get(0).put(12, 4150);
+    shooterSpeeds.get(0).put(13, 4300);
+    shooterSpeeds.get(0).put(14, 4500);
     shooterSpeeds.get(0).put(15, 2000);
     shooterSpeeds.get(0).put(16, 2000);
     shooterSpeeds.get(0).put(17, 2000);

@@ -39,6 +39,7 @@ public final class NeoDriveControllerFactoryBuilder {
         @Override
         public ControllerImplementation create(Integer id, ModuleConfiguration moduleConfiguration) {
             CANSparkMax motor = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
+            motor.setOpenLoopRampRate(.5);
             motor.setInverted(moduleConfiguration.isDriveInverted());
 
             // Setup voltage compensation

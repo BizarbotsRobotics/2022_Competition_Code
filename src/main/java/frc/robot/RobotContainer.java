@@ -13,10 +13,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AlignWithGoal;
 import frc.robot.commands.AuxArmMoveCommand;
-import frc.robot.commands.ConveyorMoveCommand;
+import frc.robot.commands.ConveyorAutomationCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ShooterHighCloseCommand;
 import frc.robot.commands.ShooterHighFarCommand;
@@ -55,6 +58,7 @@ public class RobotContainer {
   private final FeederSubsystem feederSubsystem = new FeederSubsystem();
   private final ClimberSubsystem climbSubsystem = new ClimberSubsystem();
   private final AuxArmSubsystem auxArmSubsystem = new AuxArmSubsystem();
+  private VisionSubsystem visionSubsystem = VisionSubsystem.getInstance();
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -64,11 +68,20 @@ public class RobotContainer {
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
+    // m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+    //         m_drivetrainSubsystem,
+    //         () -> modifyAxis(primaryController.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> modifyAxis(primaryController.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> modifyAxis(primaryController.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+    // ));
+
+
+    //SLOW MODE WHEN SET TO .3, CHANGE TO A PRECISION MODE LATER, THIS IS FOR LIMELIGHT SHOOTING
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-            m_drivetrainSubsystem,
-            () -> -modifyAxis(primaryController.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(primaryController.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(primaryController.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+      m_drivetrainSubsystem,
+      () -> modifyAxis(primaryController.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * 1,
+      () -> modifyAxis(primaryController.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * 1,
+      () -> ((modifyAxis(primaryController.getRightX()) + visionSubsystem.getLimelightOffset()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) * 1
     ));
     //pcmCompressor.disable();
 
@@ -82,7 +95,7 @@ public class RobotContainer {
     // Shooter Subsystem 
     CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, new TestShooterSpeed(shooterSubsystem));
     CommandScheduler.getInstance().setDefaultCommand(auxArmSubsystem, new AuxArmMoveCommand(auxArmSubsystem, () -> -modifyAxis(primaryController.getRightTriggerAxis()), () -> -modifyAxis(primaryController.getLeftTriggerAxis())));
-    CommandScheduler.getInstance().setDefaultCommand(conveyorSubsystem, new ConveyorMoveCommand(conveyorSubsystem, () -> -modifyAxis(operatorController.getRightY())));
+    CommandScheduler.getInstance().setDefaultCommand(conveyorSubsystem, new ConveyorAutomationCommand(conveyorSubsystem, shooterSubsystem, feederSubsystem,intakeSubsystem));
 
     CommandScheduler.getInstance().setDefaultCommand(feederSubsystem, new SushiMoveCommand(feederSubsystem, () -> -modifyAxis(operatorController.getLeftY())));
     CommandScheduler.getInstance().setDefaultCommand(climbSubsystem, new climberMoveCommand(climbSubsystem, () -> -modifyAxis(operatorController.getRightTriggerAxis()), () -> -modifyAxis(operatorController.getLeftTriggerAxis())));
@@ -104,6 +117,8 @@ public class RobotContainer {
     new Button(operatorController::getBButton).whenPressed(new ShooterHighCloseCommand(shooterSubsystem));
     new Button(operatorController::getAButton).whenPressed(new ShooterLowCloseCommand(shooterSubsystem));
 
+    new Button(primaryController::getRightBumper).whenPressed(new RunCommand(visionSubsystem::setLimelightOffset));
+    new Button(primaryController::getLeftBumper).whenPressed(new RunCommand(() -> visionSubsystem.setLimelightOffset(0)));
     //new Button(primaryController::getXButton).whenPressed(new rotateToVisionTargetCommand(m_drivetrainSubsystem, VisionSubsystem,)))
     // new Button(operatorController::getBButton).whileHeld(new conveyorCommand(conveyorSubsystem));
     // new Button(operatorController::getLeftBumper).whileHeld(new sushiCommand(feederSubsystem));

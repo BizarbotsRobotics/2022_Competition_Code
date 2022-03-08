@@ -33,31 +33,31 @@ public final class Constants {
 
     public static final int DRIVETRAIN_PIGEON_ID = 0; // FIXME Set Pigeon ID
 
-    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 7; // FIXME Set front left module drive motor ID
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 8; // FIXME Set front left module steer motor ID
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 3; // FIXME Set front left steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(238.88671316465306); // FIXME Measure and set front left steer offset
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 5; // FIXME Set front left module drive motor ID
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 6; // FIXME Set front left module steer motor ID
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 23; // FIXME Set front left steer encoder ID
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(339.08); // FIXME Measure and set front left steer offset
 
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 1; // FIXME Set front right drive motor ID
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 2; // FIXME Set front right steer motor ID
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 2; // FIXME Set front right steer encoder ID
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(205.2246039534871); // FIXME Measure and set front right steer offset
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 3; // FIXME Set front LEFT drive motor ID
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 4; // FIXME Set front LEFT steer motor ID
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 22; // FIXME Set front LEFT steer encoder ID
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(17.05); // FIXME Measure and set front LEFT steer offset
 
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 5; // FIXME Set back left drive motor ID
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 6; // FIXME Set back left steer motor ID
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 1; // FIXME Set back left steer encoder ID
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(159.60939048723205); // FIXME Measure and set back left steer offset
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 7; // FIXME Set back left drive motor ID
+    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 8; // FIXME Set back left steer motor ID
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 21; // FIXME Set back left steer encoder ID
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(59.85); // FIXME Measure and set back left steer offset
 
-    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 3; // FIXME Set back right drive motor ID
-    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 4; // FIXME Set back right steer motor ID
-    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 0; // FIXME Set back right steer encoder ID
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(287.5781482104335); // FIXME Measure and set back right steer offset
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 1; // FIXME Set back LEFT drive motor ID
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 2; // FIXME Set back LEFT steer motor ID
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 24; // FIXME Set back LEFT steer encoder ID
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(107.49); // FIXME Measure and set back LEFT steer offset
 
     /* 
     * Intake Constants 
     */
 
-    public static final int[] INTAKE_SOLENOID_PORTS = {0,1};
+    public static final int[] INTAKE_SOLENOID_PORTS = {0,2};
     public static final int INTAKE_WHEEL_ID = 10;
     public static final double INTAKE_WHEEL_SPEED = .6;
 
@@ -69,6 +69,15 @@ public final class Constants {
     public static final int BOTTOM_CONVEYOR_ID = 15;
     public static final double BOTTOM_CONVEYOR_SPEED = .6;
     
+    public static final double CONVEYOR_kP = 0.0001; 
+    public static final double CONVEYOR_kI = 0;
+    public static final double CONVEYOR_kD = 0; 
+    public static final double CONVEYOR_kIz = 0; 
+    public static final double CONVEYOR_kFF = 0.00019; 
+    public static final double CONVEYOR_kMaxOutput = 1; 
+    public static final double CONVEYOR_kMinOutput = -1;
+    public static final double CONVEYOR_maxRPM = 5400;
+    public static final int CONVEYOR_CURRENT_LIMIT = 20;
     /*
     * Sushi Constants
     */
@@ -79,18 +88,19 @@ public final class Constants {
     /*
     * Shooter Constants
     */
+    public static final int SHOOTER_DEFAULT_SPEED = 500;
     public static final int[] SHOOTER_SOLENOID_PORTS = {6,7};
     public static final int SHOOTER_ID_LEFT = 12;
     public static final int SHOOTER_ID_RIGHT = 11;
 
-    public static final double SHOOTER_kP = 0.0002; 
+    public static final double SHOOTER_kP = 0.00023; 
     public static final double SHOOTER_kI = 0;
-    public static final double SHOOTER_kD = .01; 
+    public static final double SHOOTER_kD = .0000036; 
     public static final double SHOOTER_kIz = 0; 
-    public static final double SHOOTER_kFF = 0.000174; 
+    public static final double SHOOTER_kFF = 0.000185; 
     public static final double SHOOTER_kMaxOutput = 1; 
     public static final double SHOOTER_kMinOutput = -1;
-    public static final double SHOOTER_maxRPM = 5700;
+    public static final double SHOOTER_maxRPM = 5400;
     public static final int SHOOTER_CURRENT_LIMIT = 20;
 
     /*
@@ -101,5 +111,13 @@ public final class Constants {
     public static final int CLIMBER_ID_AUX = 15;
     public static final double CLIMBER_SPEED = 1;
     public static final double AUX_ARM_SPEED = .5;
+
+
+    /* 
+    * LIMELIGHT PID VALUES
+    */
+
+    public static final double GOAL_ALIGN_KP = 0.008;
+    public static final double GOAL_ALIGN_KD = 0.0008;
 }
 
