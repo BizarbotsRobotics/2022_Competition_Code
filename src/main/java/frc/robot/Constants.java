@@ -27,6 +27,8 @@ public final class Constants {
     /**
      * Drive Constants
      */
+
+    public static final double PIGEON_OFFSET = 12;
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.5588; // FIXME Measure and set trackwidth
 
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.5842; // FIXME Measure and set wheelbase
@@ -41,7 +43,7 @@ public final class Constants {
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 3; // FIXME Set front LEFT drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 4; // FIXME Set front LEFT steer motor ID
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 22; // FIXME Set front LEFT steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(17.05); // FIXME Measure and set front LEFT steer offset
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(13.45); // FIXME Measure and set front LEFT steer offset
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 7; // FIXME Set back left drive motor ID
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 8; // FIXME Set back left steer motor ID
@@ -57,7 +59,7 @@ public final class Constants {
     * Intake Constants 
     */
 
-    public static final int[] INTAKE_SOLENOID_PORTS = {0,2};
+    public static final int[] INTAKE_SOLENOID_PORTS = {0,1};
     public static final int INTAKE_WHEEL_ID = 10;
     public static final double INTAKE_WHEEL_SPEED = .6;
 
@@ -78,6 +80,10 @@ public final class Constants {
     public static final double CONVEYOR_kMinOutput = -1;
     public static final double CONVEYOR_maxRPM = 5400;
     public static final int CONVEYOR_CURRENT_LIMIT = 20;
+
+    public static final int DEFAULT_CONVEYOR_DISTANCE = 10;
+    public static final int CONVEYOR_PROXIMITY_THRESHOLD = 200;
+    public static final int CONVEYOR_COLOR_THRESHOLD = 700;
     /*
     * Sushi Constants
     */
@@ -102,6 +108,8 @@ public final class Constants {
     public static final double SHOOTER_kMinOutput = -1;
     public static final double SHOOTER_maxRPM = 5400;
     public static final int SHOOTER_CURRENT_LIMIT = 20;
+
+    public static final int SHOOTER_SPEED_RANGE = 30;
 
     /*
     * Climber Constants

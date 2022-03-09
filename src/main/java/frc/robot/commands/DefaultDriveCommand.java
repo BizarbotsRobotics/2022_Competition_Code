@@ -45,7 +45,7 @@ public class DefaultDriveCommand extends CommandBase {
                     m_rotationSupplier.getAsDouble(),
                     m_drivetrainSubsystem.getGyroscopeRotation()
             )
-    );
+        );
     }
 
     @Override

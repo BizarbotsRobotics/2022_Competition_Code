@@ -29,7 +29,7 @@ public class ConveyorSubsystem extends SubsystemBase {
   private final I2C.Port onboard = I2C.Port.kOnboard;
 
   // FIX ME UPDATE WITH PORT
-  //private ColorSensorV3 ballTwoSensor = new ColorSensorV3(i2cPort);
+  private ColorSensorV3 ballTwoSensor = new ColorSensorV3(i2cPort);
   private ColorSensorV3 frontColorSensor = new ColorSensorV3(onboard);
 
   private SparkMaxPIDController conveyorPidController;
@@ -53,52 +53,47 @@ public class ConveyorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     this.checkBallOneStatus();
-    //this.checkBallTwoStatus();
+    this.checkBallTwoStatus();
     this.alliance = DriverStation.getAlliance();
   }
 
   public void checkBallOneStatus() {
     DriverStation.Alliance color = null;
-    if(checkBallLoadedFront()) {
-      if(this.frontColorSensor.getRawColor().red > 700) {
+    if(getBallLoadedFront()) {
+      if(this.frontColorSensor.getRawColor().red > CONVEYOR_COLOR_THRESHOLD) {
         color = DriverStation.Alliance.Red;
-      } else if(this.frontColorSensor.getRawColor().blue > 700) {
+      } else if(this.frontColorSensor.getRawColor().blue > CONVEYOR_COLOR_THRESHOLD) {
         color = DriverStation.Alliance.Blue;
       }
       this.balls.put(1, color);
     } else {
       this.balls.put(1,null);
     }
-    //System.out.println(this.balls.get(1));
   }
 
-  // public void checkBallTwoStatus() {
-  //   DriverStation.Alliance color = null;
-  //   if(checkBallLoadedBack()) {
-  //     if(this.ballTwoSensor.getRawColor().red > 700) {
-  //       color = DriverStation.Alliance.Red;
-  //     } else if(this.ballTwoSensor.getRawColor().blue > 700) {
-  //       color = DriverStation.Alliance.Blue;
-  //     }
-  //     this.balls.put(2, color);
-  //   } else {
-  //     this.balls.put(2,null);
-  //   }
-  // }
-
-
-  public boolean checkBallLoadedFront() {
-    return this.frontColorSensor.getProximity() >= 200;
+  public void checkBallTwoStatus() {
+    DriverStation.Alliance color = null;
+    if(getBallLoadedBack()) {
+      if(this.ballTwoSensor.getRawColor().red > CONVEYOR_COLOR_THRESHOLD) {
+        color = DriverStation.Alliance.Red;
+      } else if(this.ballTwoSensor.getRawColor().blue > CONVEYOR_COLOR_THRESHOLD) {
+        color = DriverStation.Alliance.Blue;
+      }
+      this.balls.put(2, color);
+    } else {
+      this.balls.put(2,null);
+    }
   }
 
-  public boolean checkBallLoadedBack() {
-    return this.balls.get(2) != null;
+
+  public boolean getBallLoadedFront() {
+    return this.frontColorSensor.getProximity() >= CONVEYOR_PROXIMITY_THRESHOLD;
   }
 
-  public void moveFrontBallToBackPosition() {
-    this.balls.put(2,this.balls.get(1));
+  public boolean getBallLoadedBack() {
+    return this.ballTwoSensor.getProximity() >= CONVEYOR_PROXIMITY_THRESHOLD;
   }
-
+  
   public void runConveyorIn(){
     this.topConveyor.set(TOP_CONVEYOR_SPEED);
   }
@@ -130,9 +125,9 @@ public class ConveyorSubsystem extends SubsystemBase {
       return this.getBallOneColor() == this.alliance || this.getBallOneColor() == null;
   }
 
-  // public boolean isBallTwoCorrectColor() {
-  //      return this.getBallTwoColor() == this.alliance || this.getBallTwoColor() == null;
-  // }
+  public boolean isBallTwoCorrectColor() {
+       return this.getBallTwoColor() == this.alliance || this.getBallTwoColor() == null;
+  }
 
   public void moveDistance(int distance) {
     this.conveyorPidController.setReference(distance, CANSparkMax.ControlType.kSmartMotion);

@@ -5,19 +5,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AlignWithGoal;
 import frc.robot.commands.AuxArmMoveCommand;
 import frc.robot.commands.ConveyorAutomationCommand;
 import frc.robot.commands.DefaultDriveCommand;
@@ -33,6 +27,7 @@ import frc.robot.commands.outtakeBallCommand;
 import frc.robot.commands.toggleAngleCommand;
 import frc.robot.commands.toggleIntakeFlipCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.util.Limelight.LedMode;
 import frc.robot.subsystems.*;
 
 /**
@@ -49,6 +44,7 @@ public class RobotContainer {
 
   //Pneumatics
   Compressor pcmCompressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+  
 
 
   //Subsystems
@@ -63,6 +59,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    pcmCompressor.enableAnalog(80, 120);
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -112,13 +109,13 @@ public class RobotContainer {
     new Button(operatorController::getStartButton).toggleWhenPressed(new toggleIntakeFlipCommand(intakeSubsystem));
     new Button(operatorController::getBackButton).toggleWhenPressed(new toggleAngleCommand(shooterSubsystem));
 
-    new Button(operatorController::getYButton).whenPressed(new ShooterHighFarCommand(shooterSubsystem));
-    new Button(operatorController::getXButton).whenPressed(new ShooterLowFarCommand(shooterSubsystem));
-    new Button(operatorController::getBButton).whenPressed(new ShooterHighCloseCommand(shooterSubsystem));
-    new Button(operatorController::getAButton).whenPressed(new ShooterLowCloseCommand(shooterSubsystem));
+    new Button(operatorController::getYButton).whenPressed(new ShooterHighFarCommand(shooterSubsystem, visionSubsystem, conveyorSubsystem, feederSubsystem, intakeSubsystem));
+    new Button(operatorController::getXButton).whenPressed(new ShooterLowFarCommand(shooterSubsystem, visionSubsystem, conveyorSubsystem, feederSubsystem, intakeSubsystem));
+    new Button(operatorController::getBButton).whenPressed(new ShooterHighCloseCommand(shooterSubsystem, visionSubsystem, conveyorSubsystem, feederSubsystem, intakeSubsystem));
+    new Button(operatorController::getAButton).whenPressed(new ShooterLowCloseCommand(shooterSubsystem, visionSubsystem, conveyorSubsystem, feederSubsystem, intakeSubsystem));
 
-    new Button(primaryController::getRightBumper).whenPressed(new RunCommand(visionSubsystem::setLimelightOffset));
-    new Button(primaryController::getLeftBumper).whenPressed(new RunCommand(() -> visionSubsystem.setLimelightOffset(0)));
+    new Button(primaryController::getRightBumper).whenPressed(new RunCommand(visionSubsystem::setLimelightOffset).beforeStarting(new InstantCommand(() -> visionSubsystem.setLedMode(LedMode.ON))));
+    new Button(primaryController::getLeftBumper).whenPressed(new RunCommand(() -> visionSubsystem.setLimelightOffset(0)).beforeStarting(new InstantCommand(() -> visionSubsystem.setLedMode(LedMode.OFF))));
     //new Button(primaryController::getXButton).whenPressed(new rotateToVisionTargetCommand(m_drivetrainSubsystem, VisionSubsystem,)))
     // new Button(operatorController::getBButton).whileHeld(new conveyorCommand(conveyorSubsystem));
     // new Button(operatorController::getLeftBumper).whileHeld(new sushiCommand(feederSubsystem));

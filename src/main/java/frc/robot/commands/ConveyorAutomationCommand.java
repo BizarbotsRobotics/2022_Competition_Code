@@ -23,11 +23,13 @@ public class ConveyorAutomationCommand extends CommandBase {
   private ShooterSubsystem shooter;
   private FeederSubsystem feeder;
   private IntakeSubsystem intake;
+  private boolean running;
   public ConveyorAutomationCommand(ConveyorSubsystem conveyor, ShooterSubsystem shooter, FeederSubsystem feeder, IntakeSubsystem intake) {
     this.conveyor = conveyor;
     this.shooter = shooter;
     this.feeder = feeder;
     this.intake = intake;
+    this.running = false;
     addRequirements(conveyor, shooter,feeder);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -45,8 +47,10 @@ public class ConveyorAutomationCommand extends CommandBase {
     // If there is a ball loaded and is the incorrect color and slot two is free we reject using the shooter.
     // FIX ME Maybe add position pid control or add check
     this.conveyor.checkBallOneStatus();
-    if(this.conveyor.checkBallLoadedFront() && !this.conveyor.isBallOneCorrectColor() && !this.conveyor.checkBallLoadedBack()) {
+    if(this.conveyor.getBallLoadedFront() && !this.conveyor.isBallOneCorrectColor() && !this.conveyor.getBallLoadedBack() && !this.running) {
+
       new SequentialCommandGroup(
+        new InstantCommand(() -> this.running = true),
         new InstantCommand(() -> this.shooter.setShooterSpeed(2500)),
         new InstantCommand(() -> this.intake.intakeCargo()),
         new InstantCommand(() -> this.conveyor.runConveyorIn()),
@@ -56,21 +60,25 @@ public class ConveyorAutomationCommand extends CommandBase {
         new WaitCommand(1),
         new InstantCommand(() -> this.feeder.sushiStop()),
         new InstantCommand(() -> this.shooter.setShooterSpeed(SHOOTER_DEFAULT_SPEED)),
-        new InstantCommand(() -> this.conveyor.stop())
-      ).schedule(true);
+        new InstantCommand(() -> this.conveyor.stop()),
+        new InstantCommand(() -> this.running = false)
+      
+      ).schedule(false);
     }
     // If there is a ball loaded and is the correct color and slot two is free we move back.
-    else if(this.conveyor.checkBallLoadedFront() && !this.conveyor.checkBallLoadedBack() && this.conveyor.isBallOneCorrectColor()) {
+    else if(this.conveyor.getBallLoadedFront() && !this.conveyor.getBallLoadedBack() && this.conveyor.isBallOneCorrectColor() && !this.running) {
       new SequentialCommandGroup(
+        new InstantCommand(() -> this.running = true),
         new InstantCommand(() -> this.conveyor.runConveyorIn()),
         new WaitCommand(.5),
-        new InstantCommand(() -> this.conveyor.stop())
-      ).schedule(true);
-      this.conveyor.moveFrontBallToBackPosition();
+        new InstantCommand(() -> this.conveyor.stop()),
+        new InstantCommand(() -> this.running = false)
+      ).schedule(false);
     } 
     // // If there is a ball in the back and the new ball is the wrong color, we outtake the ball
-    else if(this.conveyor.checkBallLoadedFront() && this.conveyor.checkBallLoadedBack() && !this.conveyor.isBallOneCorrectColor()) {
+    else if(this.conveyor.getBallLoadedFront() && this.conveyor.getBallLoadedBack() && !this.conveyor.isBallOneCorrectColor() && !this.running) {
       new SequentialCommandGroup(
+        new InstantCommand(() -> this.running = true),
         new InstantCommand(() -> this.conveyor.runConveyorOut()),
         new InstantCommand(() -> this.intake.outtakeCargo()),
         new WaitCommand(.5),
@@ -78,7 +86,8 @@ public class ConveyorAutomationCommand extends CommandBase {
         new InstantCommand(() -> this.intake.stop()),
         new InstantCommand(() -> this.conveyor.runConveyorIn()),
         new WaitCommand(.5),
-        new InstantCommand(() -> this.conveyor.stop())
+        new InstantCommand(() -> this.conveyor.stop()),
+        new InstantCommand(() -> this.running = false)
       ).schedule(true);
     }
   }

@@ -99,7 +99,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterPidController.setReference(this.setSpeed, CANSparkMax.ControlType.kVelocity);
   }
   public boolean checkSpeed(){
-    if(this.getShooterSpeed() >(this.setSpeed -30) | this.getShooterSpeed() <(this.setSpeed +30)){
+    if(this.getShooterSpeed() >(this.setSpeed - SHOOTER_SPEED_RANGE) | this.getShooterSpeed() <(this.setSpeed + SHOOTER_SPEED_RANGE)){
       return true;
     } else {
       return false;
@@ -197,13 +197,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //Initialize high hub, short distance
     shooterSpeeds.put(1, new TreeMap<Integer, Integer>());
-    shooterSpeeds.get(1).put(0,1000);
-    shooterSpeeds.get(1).put(1,1000);
-    shooterSpeeds.get(1).put(2,1000);
-    shooterSpeeds.get(1).put(3,1000);
-    shooterSpeeds.get(1).put(4,1000);
-    shooterSpeeds.get(1).put(5,1000);
-    shooterSpeeds.get(1).put(6,1000);
+    shooterSpeeds.get(1).put(0,3000);
+    shooterSpeeds.get(1).put(1,3000);
+    shooterSpeeds.get(1).put(2,3000);
+    shooterSpeeds.get(1).put(3,3000);
+    shooterSpeeds.get(1).put(4,3000);
+    shooterSpeeds.get(1).put(5,3000);
+    shooterSpeeds.get(1).put(6,3000);
 
     //Initialize low hub, far distance
     shooterSpeeds.put(2, new TreeMap<Integer, Integer>());
@@ -226,13 +226,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //Initialize low hub, short distance
     shooterSpeeds.put(3, new TreeMap<Integer, Integer>());
-    shooterSpeeds.get(3).put(0,1000);
-    shooterSpeeds.get(3).put(1,1000);
-    shooterSpeeds.get(3).put(2,1000);
-    shooterSpeeds.get(3).put(3,1000);
-    shooterSpeeds.get(3).put(4,1000);
-    shooterSpeeds.get(3).put(5,1000);
-    shooterSpeeds.get(3).put(6,1000);
+    shooterSpeeds.get(3).put(0,3000);
+    shooterSpeeds.get(3).put(1,3000);
+    shooterSpeeds.get(3).put(2,3000);
+    shooterSpeeds.get(3).put(3,3000);
+    shooterSpeeds.get(3).put(4,3000);
+    shooterSpeeds.get(3).put(5,3000);
+    shooterSpeeds.get(3).put(6,3000);
   }
 
 

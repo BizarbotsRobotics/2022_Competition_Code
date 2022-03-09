@@ -12,22 +12,26 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ConveyorSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.GOAL_TYPE;
 import frc.robot.subsystems.ShooterSubsystem.POSITION;
+import static frc.robot.Constants.*;
 
 public class ShooterHighCloseCommand extends CommandBase {
-  private final ShooterSubsystem shooter;
+  private ShooterSubsystem shooter;
   private VisionSubsystem vision;
   private ConveyorSubsystem conveyor;
   private FeederSubsystem feeder;
+  private IntakeSubsystem intake;
   /** Creates a new ShooterLowCloseCommand. */
-  public ShooterHighCloseCommand(ShooterSubsystem shooter, VisionSubsystem vision, ConveyorSubsystem conveyor, FeederSubsystem feeder) {
+  public ShooterHighCloseCommand(ShooterSubsystem shooter, VisionSubsystem vision, ConveyorSubsystem conveyor, FeederSubsystem feeder, IntakeSubsystem intake) {
     this.shooter = shooter;
     this.vision = vision;
     this.conveyor = conveyor;
     this.feeder = feeder;
+    this.intake = intake;
     addRequirements(shooter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -39,25 +43,12 @@ public class ShooterHighCloseCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if( this.vision.isAligned()) {
       int setPoint = this.shooter.calculateShooterSpeed(GOAL_TYPE.HIGH, POSITION.CLOSE);
       this.shooter.setShooterSpeed(setPoint);
-      if(this.shooter.getShooterSpeed() < setPoint +30 && this.shooter.getShooterSpeed() > setPoint - 30 ) {
+      if(this.shooter.checkSpeed()) {
         //init shot
-        new SequentialCommandGroup(
-          new InstantCommand(() -> (this.conveyor.runConveyorIn())),
-          new InstantCommand(() -> (this.feeder.sushiIn())),
-          new WaitCommand(.5),
-          new InstantCommand(() -> (this.conveyor.stop())),
-          new InstantCommand(() -> (this.feeder.sushiStop())),
-        );
-        this.cancel();
+        new defaultShootCommand(conveyor, feeder, intake).andThen(() -> this.cancel()).schedule();
       }
-    } else {
-      this.cancel();
-    }
-
-    
   }
 
   // Called once the command ends or is interrupted.
