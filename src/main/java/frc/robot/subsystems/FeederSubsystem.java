@@ -19,7 +19,6 @@ public class FeederSubsystem extends SubsystemBase {
   
   private final CANSparkMax sushi = new CANSparkMax(SUSHI_ID,MotorType.kBrushless);
 
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
   //private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   //private final Rev2mDistanceSensor distanceSensor = new Rev2mDistanceSensor(Port.kMXP);
 
@@ -47,5 +46,9 @@ public class FeederSubsystem extends SubsystemBase {
     } else {
       this.sushi.set(0);
     }
+  }
+
+  public void sushiOut() {
+    this.sushi.set(-SUSHI_SPEED);
   }
 }

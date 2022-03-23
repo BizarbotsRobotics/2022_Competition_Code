@@ -38,8 +38,10 @@ public class VisionSubsystem extends SubsystemBase {
                 firstError = this.getHorizontalOffset();
         }
 
+        
         @Override
         public void periodic() {
+                
                 this.hasTarget = LIMELIGHT.hasTarget();
                 if (this.hasTarget){
                         double verticalOffset = LIMELIGHT.getVerticalOffset();
@@ -56,7 +58,7 @@ public class VisionSubsystem extends SubsystemBase {
                     }
                     
                     SmartDashboard.putBoolean("isAligned", this.isAligned);
-                    SmartDashboard.putNumber("Distance", this.distanceToHub);
+                    SmartDashboard.putNumber("Distance", this.getDistanceToHubFeet());
 
         }
 

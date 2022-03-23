@@ -39,11 +39,10 @@ public class DefaultDriveCommand extends CommandBase {
         // cs.omegaRadiansPerSecond = m_rotationSupplier.getAsDouble();
         // m_drivetrainSubsystem.drive(cs);
         m_drivetrainSubsystem.drive(
-            ChassisSpeeds.fromFieldRelativeSpeeds(
+            new ChassisSpeeds(
                     m_translationXSupplier.getAsDouble(),
                     m_translationYSupplier.getAsDouble(),
-                    m_rotationSupplier.getAsDouble(),
-                    m_drivetrainSubsystem.getGyroscopeRotation()
+                    m_rotationSupplier.getAsDouble()
             )
         );
     }

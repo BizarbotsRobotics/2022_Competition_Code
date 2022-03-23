@@ -4,16 +4,19 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.IntakeFeeder;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
-public class outtakeBallCommand extends CommandBase {
-  private final IntakeFeeder intake;
-  /** Creates a new intakeCommand. */
-  public outtakeBallCommand(IntakeFeeder intake) {
-    this.intake = intake;
-    addRequirements();
+public class alignCommand extends CommandBase {
+  /** Creates a new alignCommand. */
+  private VisionSubsystem vision;
+  private XboxController controller;
+  public alignCommand(VisionSubsystem vision, XboxController controller) {
+    this.vision = vision;
+    this.controller = controller;
+    addRequirements(vision);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -24,13 +27,19 @@ public class outtakeBallCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.intake.outtakeCargo();
+    
+    this.vision.setLimelightOffset();
+    //System.out.println(this.vision.getLimelightOffset());
+    if(this.vision.isAligned()) {
+      this.controller.setRumble(RumbleType.kRightRumble, 1);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.intake.stopIntake();
+    this.vision.setLimelightOffset(0);
+    this.controller.setRumble(RumbleType.kRightRumble, 0);
   }
 
   // Returns true when the command should end.

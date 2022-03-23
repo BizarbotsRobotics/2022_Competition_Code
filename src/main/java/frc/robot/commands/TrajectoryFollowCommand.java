@@ -18,6 +18,7 @@ public class TrajectoryFollowCommand extends CommandBase {
 
     private String m_pathName;
     private PathPlannerTrajectory m_trajectory = null;
+    private DrivetrainSubsystem drivetrainSubsystem;
 
     /**
      * Executes a trajectory that makes it remain still
@@ -26,8 +27,9 @@ public class TrajectoryFollowCommand extends CommandBase {
         m_pathName = "Stay Still";
     }
 
-    public TrajectoryFollowCommand(String pathName) {
+    public TrajectoryFollowCommand(DrivetrainSubsystem drivetrainSubsystem, String pathName) {
         m_pathName = pathName;
+        this.drivetrainSubsystem = drivetrainSubsystem;
     }
 
     public TrajectoryFollowCommand(Trajectory traj) {
@@ -41,26 +43,26 @@ public class TrajectoryFollowCommand extends CommandBase {
 
         if (m_trajectory == null) {
             try {
-                m_trajectory = PathPlanner.loadPath(m_pathName, 8, 5); //2.9, 3
+                m_trajectory = PathPlanner.loadPath(m_pathName, .5, .5); //2.9, 3
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        ProfiledPIDController thetaController = new ProfiledPIDController(5, 0, 0,
+        ProfiledPIDController thetaController = new ProfiledPIDController(.05, 0, 0,
                 new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
                         Math.pow(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND, 2)));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         new PPSwerveControllerCommand(m_trajectory,
-                DrivetrainSubsystem.getInstance()::getCurrentPose,
-                DrivetrainSubsystem.getInstance().getKinematics(),
-                new PIDController(4, 0, 0),
-                new PIDController(5, 0, 0),
+                drivetrainSubsystem::getCurrentPose,
+                drivetrainSubsystem.getKinematics(),
+                new PIDController(1.6, 0, 0),
+                new PIDController(1.6, 0, 0),
                 thetaController,
-                DrivetrainSubsystem.getInstance()::actuateModulesAuto,
-                DrivetrainSubsystem.getInstance())
-                        .andThen(() -> DrivetrainSubsystem.getInstance().drive(new ChassisSpeeds(0.0, 0.0, 0.0)))
+                drivetrainSubsystem::actuateModulesAuto,
+                drivetrainSubsystem)
+                        .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)))
                         .schedule();
     }
 

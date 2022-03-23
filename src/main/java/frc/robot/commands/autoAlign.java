@@ -4,17 +4,17 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.IntakeFeeder;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
-public class toggleIntakeFlipCommand extends CommandBase {
-  /** Creates a new toggleIntakeFlipCommand. */
-  private final IntakeFeeder intake;
-
-  public toggleIntakeFlipCommand(IntakeFeeder intake) {
-    this.intake = intake;
-    addRequirements(intake);
+public class autoAlign extends CommandBase {
+  /** Creates a new alignCommand. */
+  private VisionSubsystem vision;
+  public autoAlign(VisionSubsystem vision) {
+    this.vision = vision;
+    addRequirements(vision);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -25,16 +25,21 @@ public class toggleIntakeFlipCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.intake.toggleIntake();
+    
+    this.vision.setLimelightOffset();
+    //System.out.println(this.vision.getLimelightOffset());
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.vision.setLimelightOffset(0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return this.vision.isAligned();
   }
 }

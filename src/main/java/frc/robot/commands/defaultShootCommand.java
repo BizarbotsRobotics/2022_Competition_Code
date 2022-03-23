@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ConveyorSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeFeeder;
 import frc.robot.subsystems.IntakeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -16,25 +17,21 @@ import frc.robot.subsystems.IntakeSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class defaultShootCommand extends SequentialCommandGroup {
   /** Creates a new defaultShootCommand. */
-  private ConveyorSubsystem conveyor;
-  private FeederSubsystem feeder;
-  private IntakeSubsystem intake;
+  private IntakeFeeder intakeFeeder;
 
-  public defaultShootCommand(ConveyorSubsystem conveyor, FeederSubsystem feeder, IntakeSubsystem intake) {
+  public defaultShootCommand(IntakeFeeder intakeFeeder) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    this.conveyor = conveyor;
-    this.feeder = feeder;
-    this.intake = intake;
+    this.intakeFeeder = intakeFeeder;
   addCommands(
-    new InstantCommand(() -> this.conveyor.runConveyorIn()),
-    new InstantCommand(() -> this.intake.intakeCargo()),
-    new InstantCommand(() -> this.feeder.sushiIn()),
+    new InstantCommand(() -> this.intakeFeeder.runConveyorIn()),
+    new InstantCommand(() -> this.intakeFeeder.intakeCargo()),
+    new InstantCommand(() -> this.intakeFeeder.sushiIn()),
     new WaitCommand(.5),
     //new InstantCommand(() -> this.conveyor.moveDistance(DEFAULT_CONVEYOR_DISTANCE)),
-    new InstantCommand(() -> this.intake.stop()),
-    new InstantCommand(() -> this.conveyor.stop()),
-    new InstantCommand(() -> this.feeder.sushiStop())
+    new InstantCommand(() -> this.intakeFeeder.stopIntake()),
+    new InstantCommand(() -> this.intakeFeeder.conveyorStop()),
+    new InstantCommand(() -> this.intakeFeeder.sushiStop())
   );
   }
 }

@@ -20,7 +20,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private final VictorSPX intakeWheels = new VictorSPX(INTAKE_WHEEL_ID);
 
   public IntakeSubsystem() {
-     this.raiseIntake();
+     this.lowerIntake();
      this.intakeWheels.setStatusFramePeriod(1,50);
      this.intakeWheels.setStatusFramePeriod(2,50);
   }
@@ -44,7 +44,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void outtakeCargo() {
-    this.intakeWheels.set(ControlMode.PercentOutput, -INTAKE_WHEEL_SPEED);
+    this.intakeWheels.set(ControlMode.PercentOutput, -OUTTAKE_WHEEL_SPEED);
   }
 
   public void stop() {

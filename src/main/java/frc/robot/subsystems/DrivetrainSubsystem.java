@@ -21,21 +21,28 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix.ErrorCode;
 
 import static frc.robot.Constants.*;
 
+import java.util.Vector;
+
 public class DrivetrainSubsystem extends SubsystemBase {
+
+    public final Field2d m_field = new Field2d();
         private static DrivetrainSubsystem instance = null;
         public static final double AUTO_DRIVE_SCALE = 1;
-        public static final double MAX_VOLTAGE = 10.0;
-        public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
+        public static final double MAX_VOLTAGE = 11.0;
+        public static final double MAX_VELOCITY_METERS_PER_SECOND = (6380.0 / 60.0 *
           SdsModuleConfigurations.MK4_L1.getDriveReduction() *
-          SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;
+          SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI);
 
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
           Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
@@ -79,6 +86,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
 SwerveDriveOdometry m_odometry;
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
+  private Vector<ErrorCode> canFR = new Vector<ErrorCode>(10);
+  private Vector<ErrorCode>  canFL= new Vector<ErrorCode>(10);
+  private Vector<ErrorCode>  canBR= new Vector<ErrorCode>(10);
+  private Vector<ErrorCode> canBL= new Vector<ErrorCode>(10);
+  
   public DrivetrainSubsystem() {
         m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
           this.initEncoders();
@@ -114,8 +126,45 @@ SwerveDriveOdometry m_odometry;
         m_backLeftCanCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
         m_backRightCanCoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
+        SmartDashboard.putBoolean("CANFL", true);
+        for (ErrorCode e : canFL) {
+            if (e != ErrorCode.OK) {
+                SmartDashboard.putBoolean("CANFL", false);
+                break;
+            }
+
+        }
+        SmartDashboard.putBoolean("CANFR", true);
+        for (ErrorCode e : canFR) {
+            if (e != ErrorCode.OK) {
+                SmartDashboard.putBoolean("CANFR", false);
+                break;
+            }
+
+        }
+        SmartDashboard.putBoolean("CANBL", true);
+        for (ErrorCode e : canBL) {
+            if (e != ErrorCode.OK) {
+                SmartDashboard.putBoolean("CANBL", false);
+                break;
+            }
+            
+
+        }
+        SmartDashboard.putBoolean("CANBR", true);
+        for (ErrorCode e : canBR) {
+            if (e != ErrorCode.OK) {
+                SmartDashboard.putBoolean("CANBR", false);
+                break;
+            }
+            
+
+        }
+
+        
         m_pigeon.clearStickyFaults();
        // m_pigeon.configMountPose(Pigeon2.AxisDirection., Pigeon2.AxisDirection);
+       
   }
 
   private void initMotors() {
@@ -192,12 +241,12 @@ SwerveDriveOdometry m_odometry;
   }
 
   public Rotation2d getGyroscopeRotation() {
-    return Rotation2d.fromDegrees(m_pigeon.getYaw());
+    return Rotation2d.fromDegrees(m_pigeon.getYaw()+90);
   }
 
   public double getGyroPitch() {
         return m_pigeon.getPitch();
-        }
+}
 
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_chassisSpeeds = chassisSpeeds;
@@ -230,15 +279,24 @@ SwerveDriveOdometry m_odometry;
 
   @Override
   public void periodic() {
+    //this.resetOrientationToField();
         //odometryEntry.setString(getCurrentPose().toString());
         // Update the pose
+        //System.out.println(m_pigeon.getYaw());
+        m_field.setRobotPose(m_odometry.getPoseMeters());
+        SmartDashboard.putNumber("Gyro", m_pigeon.getYaw());
         SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
-        //this.pose = m_odometry.update(gyroAngle, states[0], states[1],
-        //states[2], states[3]);
+        m_odometry.update(getGyroscopeRotation(), states[0], states[1],states[2], states[3]);
         
         
-        SmartDashboard.putNumber("Gyro", -m_pigeon.getYaw());
+        
+        // if (m_frontLeftCanCoder.getLastError() != ErrorCode.OK ||
+        //     m_frontRightCanCoder.getLastError() != ErrorCode.OK ||
+        //     m_backLeftCanCoder.getLastError() != ErrorCode.OK ||
+        //     m_backRightCanCoder.getLastError() != ErrorCode.OK) {
+        //         SmartDashboard.putBoolean("Bad CanCoder Periodic", true);
 
+        // }
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
         
@@ -272,6 +330,20 @@ public SwerveDriveKinematics getKinematics(){
      */
     public void resetOdometry(Pose2d pose){
         m_odometry.resetPosition(pose, pose.getRotation());
+    }
+
+    // Use carefully!!!
+    public void resetOrientationToField() {
+        
+    //     Double offset = PIGEON_OFFSET;
+    //     if(DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+    //             offset = offset + 180;
+    //     }       
+        //m_pigeon.setYawToCompass();
+        //System.out.println(m_pigeon.getYaw());
+       //m_pigeon.setYaw(offset);
+       
+
     }
 
     public void setLockInPlace(boolean lock) {
