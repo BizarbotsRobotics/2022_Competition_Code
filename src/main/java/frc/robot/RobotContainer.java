@@ -16,13 +16,14 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AuxArmMoveCommand;
 import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.DriveStraight;
 import frc.robot.commands.DriveStraight1Ball;
-import frc.robot.commands.DriveStraight2Ball;
+import frc.robot.commands.Blue2Ball;
+import frc.robot.commands.Blue3Ball;
 import frc.robot.commands.ShooterHighCloseCommand;
 import frc.robot.commands.ShooterHighFarCommand;
 import frc.robot.commands.ShooterLowCloseCommand;
 import frc.robot.commands.ShooterLowFarCommand;
+import frc.robot.commands.SnapToAngle;
 import frc.robot.commands.alignCommand;
 import frc.robot.commands.climberMoveCommand;
 import frc.robot.commands.intakeBallCommand;
@@ -108,9 +109,9 @@ public class RobotContainer {
 
   private void configureSendableChooser() {
     m_chooser.setDefaultOption("Stay Still", new InstantCommand());
-    m_chooser.setDefaultOption("Drive Straight", new DriveStraight(m_drivetrainSubsystem, visionSubsystem, shooterSubsystem, intakeFeeder));
-    m_chooser.setDefaultOption("Drive Straight and score 2 balls", new DriveStraight2Ball(m_drivetrainSubsystem, visionSubsystem));
-    m_chooser.setDefaultOption("Drive Straight and score 1 balls", new DriveStraight1Ball(m_drivetrainSubsystem, visionSubsystem, intakeFeeder, shooterSubsystem));
+    m_chooser.setDefaultOption("Drive Straight", new DriveStraight1Ball(m_drivetrainSubsystem, visionSubsystem, shooterSubsystem, intakeFeeder));
+    m_chooser.setDefaultOption("Drive Straight and score 3 balls", new Blue3Ball(m_drivetrainSubsystem, visionSubsystem, intakeFeeder, shooterSubsystem));
+    //m_chooser.setDefaultOption("Drive Straight and score 2 balls", new Blue2Ball(m_drivetrainSubsystem, visionSubsystem, intakeFeeder, shooterSubsystem));
     //bm_chooser.setDefaultOption("SCARY TEST", new DriveStraight1Ball(m_drivetrainSubsystem, visionSubsystem));
     SmartDashboard.putData(m_chooser);
 }
@@ -138,6 +139,11 @@ public class RobotContainer {
 
     new Button(() -> operatorController.getLeftTriggerAxis() > .2).whileHeld(new InstantCommand(()->this.shooterSubsystem.shooterStop()));
     new Button(() -> operatorController.getRightTriggerAxis() > .2).whileHeld(new InstantCommand(()->this.shooterSubsystem.shooterStop()));
+
+
+    //new Button(primaryController::getAButton).whileHeld(new SnapToAngle(90, m_drivetrainSubsystem));
+
+
 
     new Trigger(() -> (operatorController.getRightY() > 0.2))
                 .whenActive(() -> { intakeFeeder.runConveyorIn(); } )

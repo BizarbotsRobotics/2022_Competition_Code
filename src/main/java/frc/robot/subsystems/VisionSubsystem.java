@@ -32,9 +32,12 @@ public class VisionSubsystem extends SubsystemBase {
 
         private boolean hasTarget;
         private boolean isAligned;
+        public int stableCounter = 0;
+        private boolean stableAligned;
 
         public VisionSubsystem() {
                 lastDistance = 0.0;
+                stableCounter = 0;
                 firstError = this.getHorizontalOffset();
         }
 
@@ -53,11 +56,20 @@ public class VisionSubsystem extends SubsystemBase {
 
                 if (Math.abs(this.getHorizontalOffset()) <= TARGET_ALLOWABLE_ERROR) {
                         this.isAligned = true;
+                        stableCounter++;
+                        if(stableCounter > 10) {
+                                this.stableAligned = true;
+                        } else {
+                                this.stableAligned = false;;
+                        }
                     } else {
                         this.isAligned = false;
+                        stableCounter = 0;
+                        this.stableAligned = false;
+
                     }
                     
-                    SmartDashboard.putBoolean("isAligned", this.isAligned);
+                    SmartDashboard.putBoolean("isAligned", this.isAligned());
                     SmartDashboard.putNumber("Distance", this.getDistanceToHubFeet());
 
         }
@@ -93,7 +105,11 @@ public class VisionSubsystem extends SubsystemBase {
 
         
         public boolean isAligned() {
-            return this.isAligned;
+                return this.isAligned && this.hasTarget;
+        }
+
+        public boolean stableAlign() {
+                return this.stableAligned;
         }
 
         public void setLimelightOffset() {
@@ -101,17 +117,19 @@ public class VisionSubsystem extends SubsystemBase {
                 double offset = -this.getHorizontalOffset();
                 double angularSpeed = (offset * GOAL_ALIGN_KP + Math.abs(offset - firstError) * GOAL_ALIGN_KD) * 2; //TODO make this a constant pls
         
-                if (this.isAligned() == true) {
+                if (this.isAligned()) {
                     limelightOffset = 0;
                 } else {
+                    if(this.getHorizontalOffset() == 0)
+                        angularSpeed = .4;
                     if (this.getHorizontalOffset() <= 0)
                         limelightOffset = -angularSpeed;
         
                     if (this.getHorizontalOffset() >= 0) 
                         limelightOffset = -angularSpeed;
                 }
-                System.out.println(offset);
-                SmartDashboard.putNumber("Angulat speed", limelightOffset);
+                //System.out.println(offset);
+                SmartDashboard.putNumber("Angular speed", limelightOffset);
             }
         
             public void setLimelightOffset(double value) {

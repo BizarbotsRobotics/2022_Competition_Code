@@ -96,7 +96,7 @@ SwerveDriveOdometry m_odometry;
           this.initEncoders();
     this.initMotors();
 
-    
+
     
   }
 
@@ -244,6 +244,10 @@ SwerveDriveOdometry m_odometry;
     return Rotation2d.fromDegrees(m_pigeon.getYaw()+90);
   }
 
+  public Rotation2d getGyroscopeRotationSNAP() {
+    return Rotation2d.fromDegrees(m_pigeon.getYaw());
+  }
+
   public double getGyroPitch() {
         return m_pigeon.getPitch();
 }
@@ -287,7 +291,7 @@ SwerveDriveOdometry m_odometry;
         SmartDashboard.putNumber("Gyro", m_pigeon.getYaw());
         SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
         m_odometry.update(getGyroscopeRotation(), states[0], states[1],states[2], states[3]);
-        
+        SmartDashboard.putNumber("YAW", m_pigeon.getYaw());
         
         
         // if (m_frontLeftCanCoder.getLastError() != ErrorCode.OK ||

@@ -4,34 +4,46 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeFeeder;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-
+import static frc.robot.Constants.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveStraight1Ball extends SequentialCommandGroup {
-  /** Creates a new DriveStraight1Ball. */
+  /** Creates a new DriveStraight. */
   private DrivetrainSubsystem drivetrainSubsystem;
-  private VisionSubsystem visionSubsystem;
-  private ShooterSubsystem shooterSubsystem;
-  private IntakeFeeder intakeFeeder;
-  public DriveStraight1Ball(DrivetrainSubsystem drivetrainSubsystem, VisionSubsystem visionSubsystem, IntakeFeeder intakeFeeder, ShooterSubsystem shooterSubsystem) {
+  private VisionSubsystem vision;
+  private ShooterSubsystem shooter;
+  private IntakeFeeder intake;
+  public DriveStraight1Ball(DrivetrainSubsystem drivetrainSubsystem, VisionSubsystem vision, ShooterSubsystem shooter, IntakeFeeder intake) {
+    this.vision = vision;
     this.drivetrainSubsystem = drivetrainSubsystem;
-    this.visionSubsystem = visionSubsystem;
-    this.shooterSubsystem = shooterSubsystem;
-    this.intakeFeeder = intakeFeeder;
+    this.shooter = shooter;
+    this.intake = intake;
+    // Add your commands in the addCommands() call, e.g.
+    // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new PathResetOdometryCommand(drivetrainSubsystem, "Blue 3 Ball 1"),
-      new TrajectoryFollowCommand(drivetrainSubsystem, "Blue 3 Ball 1").raceWith(new InstantCommand(() -> this.intakeFeeder.intakeCargo())).andThen(new InstantCommand(() -> this.intakeFeeder.stopIntake())),
-      new autoAlign(visionSubsystem).raceWith(new DefaultDriveCommand(drivetrainSubsystem, (()->0),(()->0),(() ->(visionSubsystem.getLimelightOffset() * drivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)))),
-      new ShooterHighFarCommand(shooterSubsystem, visionSubsystem, intakeFeeder).withTimeout(1)
+      // new DefaultDriveCommand(drivetrainSubsystem, (()->.75),(()->0),(()->0)).withTimeout(3),
+      // new DefaultDriveCommand(drivetrainSubsystem, (()->.0),(()->0),(()->0)),
+      // new autoAlign(vision).raceWith(new DefaultDriveCommand(drivetrainSubsystem, (()->0),(()->0),(() ->(vision.getLimelightOffset() * drivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)))),
+      // new WaitCommand(3),
+      // new ShooterHighFarCommand(shooter, vision, intake)
+      // new InstantCommand(() ->drivetrainSubsystem.driveAuto(new ChassisSpeeds(.75,0,0))).withTimeout(3),
+      // new InstantCommand(() ->drivetrainSubsystem.driveAuto(new ChassisSpeeds(0,0,(vision.getLimelightOffset()) * drivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND))).withTimeout(3).raceWith(new InstantCommand(() -> vision.setLimelightOffset())).withTimeout(2),
+      new DefaultDriveCommand(drivetrainSubsystem, (()->.75),(()->0),(()->0)).withTimeout(3),
+      new DefaultDriveCommand(drivetrainSubsystem, (()->.0),(()->0),(()->0)).withTimeout(.2),
+      new autoAlign(vision).raceWith(new DefaultDriveCommand(drivetrainSubsystem, (()->0),(()->0),(() ->(vision.getLimelightOffset() * drivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)))).withTimeout(2),
+      new ShooterHighFarCommand(shooter, vision, intake).withTimeout(5)
     );
   }
 }

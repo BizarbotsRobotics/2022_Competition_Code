@@ -51,7 +51,7 @@ public class IntakeFeeder extends SubsystemBase {
 
   @Override
   public void periodic() {
-    this.colorAutomation();
+    //this.colorAutomation();
   }
 
 
@@ -75,6 +75,10 @@ public class IntakeFeeder extends SubsystemBase {
 
   public void outtakeCargo() {
     this.intakeWheels.set(ControlMode.PercentOutput, -OUTTAKE_WHEEL_SPEED);
+  }
+
+  public void runIntake(double speed) {
+    this.intakeWheels.set(ControlMode.PercentOutput, speed);
   }
 
   public void stopIntake() {

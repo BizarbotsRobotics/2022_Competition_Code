@@ -6,6 +6,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -43,13 +44,13 @@ public class TrajectoryFollowCommand extends CommandBase {
 
         if (m_trajectory == null) {
             try {
-                m_trajectory = PathPlanner.loadPath(m_pathName, .5, .5); //2.9, 3
+                m_trajectory = PathPlanner.loadPath(m_pathName, 2.6, 2.6); //2.9, 3
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        ProfiledPIDController thetaController = new ProfiledPIDController(.05, 0, 0,
+        ProfiledPIDController thetaController = new ProfiledPIDController(.45, 0, .00025,
                 new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
                         Math.pow(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND, 2)));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -57,14 +58,16 @@ public class TrajectoryFollowCommand extends CommandBase {
         new PPSwerveControllerCommand(m_trajectory,
                 drivetrainSubsystem::getCurrentPose,
                 drivetrainSubsystem.getKinematics(),
-                new PIDController(1.6, 0, 0),
-                new PIDController(1.6, 0, 0),
+                new PIDController(1.34, 0, 0),
+                new PIDController(1.34, 0, 0),
                 thetaController,
                 drivetrainSubsystem::actuateModulesAuto,
                 drivetrainSubsystem)
                         .andThen(() -> drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0)))
                         .schedule();
+        
     }
+
 
     @Override
     public void end(boolean interrupted) {

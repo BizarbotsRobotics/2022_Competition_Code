@@ -61,14 +61,14 @@ public final class Constants {
 
     public static final int[] INTAKE_SOLENOID_PORTS = {0,1};
     public static final int INTAKE_WHEEL_ID = 10;
-    public static final double INTAKE_WHEEL_SPEED = 1;
+    public static final double INTAKE_WHEEL_SPEED = .8;
     public static final double OUTTAKE_WHEEL_SPEED = .6;
 
     /* 
     * Conveyor Constants
     */
     public static final int TOP_CONVEYOR_ID = 10;
-    public static final double TOP_CONVEYOR_SPEED = .8;
+    public static final double TOP_CONVEYOR_SPEED = .7;
     public static final int BOTTOM_CONVEYOR_ID = 15;
     public static final double BOTTOM_CONVEYOR_SPEED = .6;
     
@@ -95,7 +95,7 @@ public final class Constants {
     /*
     * Shooter Constants
     */
-    public static final int SHOOTER_DEFAULT_SPEED = 0;
+    public static final int SHOOTER_DEFAULT_SPEED = 2500;
     public static final int[] SHOOTER_SOLENOID_PORTS = {6,7};
     public static final int SHOOTER_ID_LEFT = 12;
     public static final int SHOOTER_ID_RIGHT = 11;
@@ -104,13 +104,13 @@ public final class Constants {
     public static final double SHOOTER_kI = 0;
     public static final double SHOOTER_kD = 0; 
     public static final double SHOOTER_kIz = 0; 
-    public static final double SHOOTER_kFF = 0.000195; 
+    public static final double SHOOTER_kFF = 0.000183; 
     public static final double SHOOTER_kMaxOutput = 1; 
     public static final double SHOOTER_kMinOutput = -1;
     public static final double SHOOTER_maxRPM = 5400;
     public static final int SHOOTER_CURRENT_LIMIT = 40;
 
-    public static final int SHOOTER_SPEED_RANGE = 30;
+    public static final int SHOOTER_SPEED_RANGE = 40;
     public static final double SHOOTER_REJECT_PERCENTAGE = .6;
 
     /*

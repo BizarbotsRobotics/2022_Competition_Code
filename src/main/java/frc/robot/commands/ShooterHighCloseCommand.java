@@ -40,6 +40,7 @@ public class ShooterHighCloseCommand extends CommandBase {
   @Override
   public void initialize() {
     shot = false;
+    this.shooter.setShooterLock(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,7 +59,8 @@ public class ShooterHighCloseCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.shooter.setShooterSpeed(SHOOTER_DEFAULT_SPEED);
+    //this.shooter.setShooterSpeed(SHOOTER_DEFAULT_SPEED);
+    this.shooter.setShooterLock(false);
   }
 
   // Returns true when the command should end.

@@ -26,7 +26,7 @@ public class ShooterHighFarCommand extends CommandBase {
     this.shooter = shooter;
     this.vision = vision;
     this.intakeFeeder = intakeFeeder;
-    addRequirements(shooter,intakeFeeder);
+    addRequirements(shooter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -34,14 +34,15 @@ public class ShooterHighFarCommand extends CommandBase {
   @Override
   public void initialize() {
     shot = false;
+    this.shooter.setShooterLock(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     this.shooter.closeAngle();
+    this.shooter.setShooterLock(true);
     if( this.vision.isAligned()) {
-      
       int setPoint = this.shooter.calculateShooterSpeed(GOAL_TYPE.HIGH, POSITION.FAR);
       this.shooter.setShooterSpeed(setPoint);
       if(this.shooter.checkSpeed()) {
@@ -55,7 +56,8 @@ public class ShooterHighFarCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.shooter.setShooterSpeed(SHOOTER_DEFAULT_SPEED);
+    //this.shooter.setShooterSpeed(SHOOTER_DEFAULT_SPEED);
+    this.shooter.setShooterLock(false);
   }
 
   // Returns true when the command should end.

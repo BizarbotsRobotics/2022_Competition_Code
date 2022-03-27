@@ -48,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private RelativeEncoder shooterLeftEncoder;
 
   private Double setPercentage = 0.0;
-  private  HashMap<Integer, TreeMap<Integer, Integer>> shooterSpeeds;
+  private  HashMap<Integer, TreeMap<Double, Integer>> shooterSpeeds;
 
   private double setSpeed = 0;
   private VisionSubsystem vision = new VisionSubsystem();
@@ -59,11 +59,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private SmartDashboard smartDashboard;
 
+  private boolean speedLock = false;
+
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
   /** Creates a new ShooterSub. */
   public ShooterSubsystem() {
 
-    
+    speedLock = false;
 
     // Reset to current values
     shooterRight.restoreFactoryDefaults();
@@ -107,7 +109,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterLeftEncoder = shooterLeft.getEncoder();
     shooterRightEncoder = shooterRight.getEncoder();
 
-    shooterSpeeds =  new HashMap<Integer, TreeMap<Integer, Integer>>();
+    shooterSpeeds =  new HashMap<Integer, TreeMap<Double, Integer>>();
     this.initValues();
 
     //this.shooterLeft.setInverted(true);
@@ -148,7 +150,19 @@ public class ShooterSubsystem extends SubsystemBase {
     
     // SmartDashboard.putNumber("SetPoint", setPoint);
     // SmartDashboard.putNumber("ProcessVariable", shooterRightEncoder.getVelocity());
+    //%this.handleShooterPower();
+  }
 
+  public void handleShooterPower() {
+    if(this.vision.hasTarget() && !speedLock) {
+      this.setShooterSpeed(this.calculateShooterSpeed(GOAL_TYPE.HIGH, POSITION.FAR));
+    } else if(!speedLock) {
+      this.setShooterSpeed(SHOOTER_DEFAULT_SPEED);
+    }
+  }
+
+  public void setShooterLock(boolean lock) {
+    this.speedLock = lock;
   }
 
   public void setShooterSpeed(int speed) {
@@ -177,19 +191,19 @@ public class ShooterSubsystem extends SubsystemBase {
   public int calculateShooterSpeed(GOAL_TYPE goalType, POSITION position){
     if(position == POSITION.CLOSE) {
       if(goalType == GOAL_TYPE.HIGH){
-        return this.shooterSpeeds.get(1).get(0);
+        return this.shooterSpeeds.get(1).get(0.0);
       }
       else {
-        return this.shooterSpeeds.get(3).get(0);
+        return this.shooterSpeeds.get(3).get(0.0);
       }
     } else {
       double distance = this.vision.getDistanceToHubFeet();
       if(goalType == GOAL_TYPE.HIGH){
-        int key  = this.shooterSpeeds.get(0).ceilingKey((int)Math.ceil(distance));
+        Double key  = this.shooterSpeeds.get(0).ceilingKey(Math.round(distance*10)/10.0);
         return this.shooterSpeeds.get(0).get(key);
       } 
       else {
-        int key  = this.shooterSpeeds.get(0).ceilingKey((int)Math.ceil(distance));
+        Double key  = this.shooterSpeeds.get(0).higherKey(Math.round(distance*10)/10.0);
         return this.shooterSpeeds.get(2).get(key);
       }
     }
@@ -236,59 +250,61 @@ public class ShooterSubsystem extends SubsystemBase {
     */
 
     //Initialize high hub, far distance
-    shooterSpeeds.put(0, new TreeMap<Integer, Integer>());
-    shooterSpeeds.get(0).put(5, 3500);
-    shooterSpeeds.get(0).put(6, 3400);
-    shooterSpeeds.get(0).put(7, 3700);
-    shooterSpeeds.get(0).put(8, 3750);
-    shooterSpeeds.get(0).put(9, 3900);
-    shooterSpeeds.get(0).put(10, 3950);
-    shooterSpeeds.get(0).put(11, 4150);
-    shooterSpeeds.get(0).put(12, 4250);
-    shooterSpeeds.get(0).put(13, 4400);
-    shooterSpeeds.get(0).put(14, 4500);
-    shooterSpeeds.get(0).put(15, 4750);
-    shooterSpeeds.get(0).put(16, 4850);
-    shooterSpeeds.get(0).put(17, 4950);
-    shooterSpeeds.get(0).put(18, 5050);
-    shooterSpeeds.get(0).put(19, 5150);
-    shooterSpeeds.get(0).put(20, 5250);
-    shooterSpeeds.get(0).put(21, 5350);
-    shooterSpeeds.get(0).put(22, 5450);
+    shooterSpeeds.put(0, new TreeMap<Double, Integer>());
+    shooterSpeeds.get(0).put(5d, 3500);
+    shooterSpeeds.get(0).put(6d, 3400);
+    shooterSpeeds.get(0).put(7d, 3700);
+    shooterSpeeds.get(0).put(8d, 3750);
+    shooterSpeeds.get(0).put(9d, 3900);
+    shooterSpeeds.get(0).put(9.5, 4000);
+    shooterSpeeds.get(0).put(10d, 4050);
+    shooterSpeeds.get(0).put(10.5, 4150);
+    shooterSpeeds.get(0).put(11d, 4250);
+    shooterSpeeds.get(0).put(12d, 4250);
+    shooterSpeeds.get(0).put(13d, 4400);
+    shooterSpeeds.get(0).put(14d, 4500);
+    shooterSpeeds.get(0).put(15d, 4750);
+    shooterSpeeds.get(0).put(16d, 4850);
+    shooterSpeeds.get(0).put(17d, 4950);
+    shooterSpeeds.get(0).put(18d, 5050);
+    shooterSpeeds.get(0).put(19d, 5150);
+    shooterSpeeds.get(0).put(20d, 5250);
+    shooterSpeeds.get(0).put(21d, 5350);
+    shooterSpeeds.get(0).put(22d, 5450);
 
     //Initialize high hub, short distance
-    shooterSpeeds.put(1, new TreeMap<Integer, Integer>());
-    shooterSpeeds.get(1).put(0,5000);
+    shooterSpeeds.put(1, new TreeMap<Double, Integer>());
+    shooterSpeeds.get(1).put(0d,5000);
 
 
     //Initialize low hub, far distance
-    shooterSpeeds.put(2, new TreeMap<Integer, Integer>());
-    shooterSpeeds.get(2).put(7, 2000);
-    shooterSpeeds.get(2).put(8, 2000);
-    shooterSpeeds.get(2).put(9, 2000);
-    shooterSpeeds.get(2).put(10, 2000);
-    shooterSpeeds.get(2).put(11, 2000);
-    shooterSpeeds.get(2).put(12, 2000);
-    shooterSpeeds.get(2).put(13, 2000);
-    shooterSpeeds.get(2).put(14, 2000);
-    shooterSpeeds.get(2).put(15, 2000);
-    shooterSpeeds.get(2).put(16, 2000);
-    shooterSpeeds.get(2).put(17, 2000);
-    shooterSpeeds.get(2).put(18, 2000);
-    shooterSpeeds.get(2).put(19, 2000);
-    shooterSpeeds.get(2).put(20, 2000);
-    shooterSpeeds.get(2).put(21, 2000);
-    shooterSpeeds.get(2).put(22, 2000);
+    shooterSpeeds.put(2, new TreeMap<Double, Integer>());
+    shooterSpeeds.get(2).put(7d, 2000);
+    shooterSpeeds.get(2).put(8d, 2000);
+    shooterSpeeds.get(2).put(9d, 2000);
+    shooterSpeeds.get(2).put(10d, 2000);
+    shooterSpeeds.get(2).put(11d, 2000);
+    shooterSpeeds.get(2).put(12d, 2000);
+    shooterSpeeds.get(2).put(13d, 2000);
+    shooterSpeeds.get(2).put(14d, 2000);
+    shooterSpeeds.get(2).put(15d, 2000);
+    shooterSpeeds.get(2).put(16d, 2000);
+    shooterSpeeds.get(2).put(17d, 2000);
+    shooterSpeeds.get(2).put(18d, 2000);
+    shooterSpeeds.get(2).put(19d, 2000);
+    shooterSpeeds.get(2).put(20d, 2000);
+    shooterSpeeds.get(2).put(21d, 2000);
+    shooterSpeeds.get(2).put(22d, 2000);
 
     //Initialize low hub, short distance
-    shooterSpeeds.put(3, new TreeMap<Integer, Integer>());
-    shooterSpeeds.get(3).put(0,2200);
-    shooterSpeeds.get(3).put(1,3000);
-    shooterSpeeds.get(3).put(2,3000);
-    shooterSpeeds.get(3).put(3,3000);
-    shooterSpeeds.get(3).put(4,3000);
-    shooterSpeeds.get(3).put(5,3000);
-    shooterSpeeds.get(3).put(6,3000);
+    shooterSpeeds.put(3, new TreeMap<Double, Integer>());
+    shooterSpeeds.get(3).put(0d,2200);
+    shooterSpeeds.get(3).put(1d,3000);
+    shooterSpeeds.get(3).put(2d,3000);
+    shooterSpeeds.get(3).put(3d,3000);
+    shooterSpeeds.get(3).put(4d,3000);
+    shooterSpeeds.get(3).put(5d,3000);
+    shooterSpeeds.get(3).put(6d,3000);
   }
 
 
